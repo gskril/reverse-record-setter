@@ -21,7 +21,6 @@ app.use(
 app.get("/", (c) => {
   return c.json({
     name: "ENS Reverse Record Setter API",
-    version: "1.0.0",
     status: "ok",
   });
 });
