@@ -81,7 +81,7 @@ export function getSignatureHash(
 /**
  * Generate a signature expiry timestamp (1 hour from now)
  */
-export function generateSignatureExpiry(): bigint {
+export function generateSignatureExpiry(): number {
   const ONE_HOUR = 60 * 60;
-  return BigInt(Math.floor(Date.now() / 1000) + ONE_HOUR);
+  return Math.floor(Date.now() / 1000) + ONE_HOUR;
 }

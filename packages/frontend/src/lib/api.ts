@@ -36,14 +36,26 @@ export async function setReverseRecords(
     body: JSON.stringify(request),
   });
 
-  const data = await response.json();
-  return data;
+  if (!response.ok) {
+    const text = await response.text();
+    return {
+      success: false,
+      error: text || `Request failed with status ${response.status}`,
+    };
+  }
+
+  return response.json();
 }
 
 export async function getChains(): Promise<
   { chainId: number; chainName: string; coinType: number }[]
 > {
   const response = await fetch(`${API_URL}/api/chains`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch chains: ${response.status}`);
+  }
+
   const data = await response.json();
   return data.chains;
 }

@@ -30,25 +30,23 @@ export function ReverseRecordForm() {
     setResults([]);
 
     try {
-      // Step 1: Generate signature expiry and construct message
       setStep("signing");
       const signatureExpiry = generateSignatureExpiry();
+
+      // Convert to bigint for viem signature construction
       const coinTypesBigInt = selectedChains.map(BigInt);
 
-      // Construct the message hash to sign
       const messageHash = constructSignatureMessage(
         address as Address,
         ensName,
         coinTypesBigInt,
-        signatureExpiry
+        BigInt(signatureExpiry)
       );
 
-      // Step 2: Request signature from wallet
       const signature = await signMessageAsync({
         message: { raw: messageHash },
       });
 
-      // Step 3: Submit to API
       setStep("submitting");
       setIsSubmitting(true);
 
@@ -56,7 +54,7 @@ export function ReverseRecordForm() {
         addr: address as Address,
         name: ensName,
         coinTypes: selectedChains,
-        signatureExpiry: Number(signatureExpiry),
+        signatureExpiry,
         signature: signature as Hex,
       });
 
@@ -138,8 +136,8 @@ export function ReverseRecordForm() {
               {isSigning
                 ? "Waiting for Signature..."
                 : isSubmitting
-                ? "Broadcasting Transactions..."
-                : `Sign & Set on ${selectedChains.length} Chain${selectedChains.length !== 1 ? "s" : ""}`}
+                  ? "Broadcasting Transactions..."
+                  : `Sign & Set on ${selectedChains.length} Chain${selectedChains.length !== 1 ? "s" : ""}`}
             </button>
           )}
         </div>

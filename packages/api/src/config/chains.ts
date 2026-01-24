@@ -10,42 +10,39 @@ import {
   linea,
   lineaSepolia,
 } from "viem/chains";
-import type { Chain } from "viem";
+import { toCoinType, type Chain } from "viem";
 
 export interface ChainConfig {
   chain: Chain;
-  coinType: number;
+  coinType: bigint;
   isTestnet: boolean;
 }
-
-// Coin types are derived from chain IDs using ENSIP-11:
-// coinType = 0x80000000 | chainId
 
 // Mainnet chains
 export const MAINNET_CHAINS: ChainConfig[] = [
   {
     chain: base,
-    coinType: 0x80000000 | base.id, // 2147492101
+    coinType: toCoinType(base.id),
     isTestnet: false,
   },
   {
     chain: optimism,
-    coinType: 0x80000000 | optimism.id, // 2147483658
+    coinType: toCoinType(optimism.id),
     isTestnet: false,
   },
   {
     chain: arbitrum,
-    coinType: 0x80000000 | arbitrum.id, // 2147525809
+    coinType: toCoinType(arbitrum.id),
     isTestnet: false,
   },
   {
     chain: scroll,
-    coinType: 0x80000000 | scroll.id, // 2148018000
+    coinType: toCoinType(scroll.id),
     isTestnet: false,
   },
   {
     chain: linea,
-    coinType: 0x80000000 | linea.id, // 2147542792
+    coinType: toCoinType(linea.id),
     isTestnet: false,
   },
 ];
@@ -54,85 +51,52 @@ export const MAINNET_CHAINS: ChainConfig[] = [
 export const TESTNET_CHAINS: ChainConfig[] = [
   {
     chain: baseSepolia,
-    coinType: 0x80000000 | baseSepolia.id, // 2147568180
+    coinType: toCoinType(baseSepolia.id),
     isTestnet: true,
   },
   {
     chain: optimismSepolia,
-    coinType: 0x80000000 | optimismSepolia.id, // 2158639068
+    coinType: toCoinType(optimismSepolia.id),
     isTestnet: true,
   },
   {
     chain: arbitrumSepolia,
-    coinType: 0x80000000 | arbitrumSepolia.id, // 2147905262
+    coinType: toCoinType(arbitrumSepolia.id),
     isTestnet: true,
   },
   {
     chain: scrollSepolia,
-    coinType: 0x80000000 | scrollSepolia.id, // 2148017999
+    coinType: toCoinType(scrollSepolia.id),
     isTestnet: true,
   },
   {
     chain: lineaSepolia,
-    coinType: 0x80000000 | lineaSepolia.id, // 2147542789
+    coinType: toCoinType(lineaSepolia.id),
     isTestnet: true,
   },
 ];
 
 // All supported chains
-export const SUPPORTED_CHAINS: ChainConfig[] = [
-  ...MAINNET_CHAINS,
-  ...TESTNET_CHAINS,
-];
+export const SUPPORTED_CHAINS = [...MAINNET_CHAINS, ...TESTNET_CHAINS];
 
-export const CHAIN_BY_COIN_TYPE = new Map<number, ChainConfig>(
+export const CHAIN_BY_COIN_TYPE = new Map(
   SUPPORTED_CHAINS.map((config) => [config.coinType, config])
 );
 
-export const CHAIN_BY_ID = new Map<number, ChainConfig>(
+export const CHAIN_BY_ID = new Map(
   SUPPORTED_CHAINS.map((config) => [config.chain.id, config])
 );
 
 /**
- * Convert a coin type to a chain ID using ENSIP-11
- * For EVM chains: chainId = coinType & 0x7fffffff
- */
-export function coinTypeToChainId(coinType: number): number {
-  return coinType & 0x7fffffff;
-}
-
-/**
- * Convert a chain ID to a coin type using ENSIP-11
- * For EVM chains: coinType = 0x80000000 | chainId
- */
-export function chainIdToCoinType(chainId: number): number {
-  return 0x80000000 | chainId;
-}
-
-/**
  * Get chain config by coin type
  */
-export function getChainByCoinType(coinType: number): ChainConfig | undefined {
+export function getChainByCoinType(coinType: bigint) {
   return CHAIN_BY_COIN_TYPE.get(coinType);
 }
 
 /**
  * Check if a coin type is supported
  */
-export function isSupportedCoinType(coinType: number): boolean {
+export function isSupportedCoinType(coinType: bigint): boolean {
   return CHAIN_BY_COIN_TYPE.has(coinType);
-}
-
-/**
- * Get mainnet chains only
- */
-export function getMainnetChains(): ChainConfig[] {
-  return MAINNET_CHAINS;
-}
-
-/**
- * Get testnet chains only
- */
-export function getTestnetChains(): ChainConfig[] {
-  return TESTNET_CHAINS;
 }

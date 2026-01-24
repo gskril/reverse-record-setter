@@ -38,7 +38,7 @@ export function ChainSelector({
 
   const handleNetworkToggle = () => {
     setShowTestnets(!showTestnets);
-    onChange([]); // Clear selection when switching networks
+    onChange([]);
   };
 
   return (

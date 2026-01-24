@@ -1,3 +1,4 @@
+import { toCoinType } from "viem";
 import {
   base,
   baseSepolia,
@@ -18,34 +19,36 @@ export interface SupportedChain {
   isTestnet: boolean;
 }
 
-// Coin types derived from chain IDs using ENSIP-11:
-// coinType = 0x80000000 | chainId
+// Helper to get coinType as number (for JSON-safe storage)
+function getCoinType(chainId: number): number {
+  return Number(toCoinType(chainId));
+}
 
 // Mainnet chains
 export const MAINNET_CHAINS: SupportedChain[] = [
   {
     chain: base,
-    coinType: 0x80000000 | base.id,
+    coinType: getCoinType(base.id),
     isTestnet: false,
   },
   {
     chain: optimism,
-    coinType: 0x80000000 | optimism.id,
+    coinType: getCoinType(optimism.id),
     isTestnet: false,
   },
   {
     chain: arbitrum,
-    coinType: 0x80000000 | arbitrum.id,
+    coinType: getCoinType(arbitrum.id),
     isTestnet: false,
   },
   {
     chain: scroll,
-    coinType: 0x80000000 | scroll.id,
+    coinType: getCoinType(scroll.id),
     isTestnet: false,
   },
   {
     chain: linea,
-    coinType: 0x80000000 | linea.id,
+    coinType: getCoinType(linea.id),
     isTestnet: false,
   },
 ];
@@ -54,27 +57,27 @@ export const MAINNET_CHAINS: SupportedChain[] = [
 export const TESTNET_CHAINS: SupportedChain[] = [
   {
     chain: baseSepolia,
-    coinType: 0x80000000 | baseSepolia.id,
+    coinType: getCoinType(baseSepolia.id),
     isTestnet: true,
   },
   {
     chain: optimismSepolia,
-    coinType: 0x80000000 | optimismSepolia.id,
+    coinType: getCoinType(optimismSepolia.id),
     isTestnet: true,
   },
   {
     chain: arbitrumSepolia,
-    coinType: 0x80000000 | arbitrumSepolia.id,
+    coinType: getCoinType(arbitrumSepolia.id),
     isTestnet: true,
   },
   {
     chain: scrollSepolia,
-    coinType: 0x80000000 | scrollSepolia.id,
+    coinType: getCoinType(scrollSepolia.id),
     isTestnet: true,
   },
   {
     chain: lineaSepolia,
-    coinType: 0x80000000 | lineaSepolia.id,
+    coinType: getCoinType(lineaSepolia.id),
     isTestnet: true,
   },
 ];
@@ -85,7 +88,9 @@ export const SUPPORTED_CHAINS: SupportedChain[] = [
   ...TESTNET_CHAINS,
 ];
 
-export function getChainByCoinType(coinType: number): SupportedChain | undefined {
+export function getChainByCoinType(
+  coinType: number
+): SupportedChain | undefined {
   return SUPPORTED_CHAINS.find((c) => c.coinType === coinType);
 }
 
