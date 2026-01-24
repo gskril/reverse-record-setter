@@ -1,4 +1,8 @@
-Lightweight API for broadcasting ENS reverse record updates to multiple chains in a single request.
+Lightweight API for broadcasting ENS reverse record setting transactions to multiple chains in a single request.
+
+Effectively this is a single endpoint that receives a `setNameForAddrWithSignature` payload (https://docs.ens.domains/registry/reverse#signatures) and broadcasts it to all chains from the `coinTypes` array in the payload.
+
+The smart version auto balances a small amount of ETH across all chains via Across or something so it doesn't run out of gas. Naive version requires manual ETH transfers to each chain.
 
 To install dependencies:
 
