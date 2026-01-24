@@ -10,11 +10,18 @@ export function TransactionResults({ results }: TransactionResultsProps) {
 
   const getExplorerUrl = (chainId: number, txHash: string): string => {
     const explorers: Record<number, string> = {
+      // Mainnets
       8453: "https://basescan.org/tx/",
       10: "https://optimistic.etherscan.io/tx/",
       42161: "https://arbiscan.io/tx/",
       534352: "https://scrollscan.com/tx/",
       59144: "https://lineascan.build/tx/",
+      // Testnets
+      84532: "https://sepolia.basescan.org/tx/",
+      11155420: "https://sepolia-optimism.etherscan.io/tx/",
+      421614: "https://sepolia.arbiscan.io/tx/",
+      534351: "https://sepolia.scrollscan.com/tx/",
+      59141: "https://sepolia.lineascan.build/tx/",
     };
     const baseUrl = explorers[chainId] || "";
     return baseUrl ? `${baseUrl}${txHash}` : "";

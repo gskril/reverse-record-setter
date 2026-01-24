@@ -1,4 +1,9 @@
-import { SUPPORTED_CHAINS, type SupportedChain } from "../lib/chains";
+import { useState } from "react";
+import {
+  MAINNET_CHAINS,
+  TESTNET_CHAINS,
+  type SupportedChain,
+} from "../lib/chains";
 
 interface ChainSelectorProps {
   selectedChains: number[];
@@ -11,6 +16,10 @@ export function ChainSelector({
   onChange,
   disabled,
 }: ChainSelectorProps) {
+  const [showTestnets, setShowTestnets] = useState(false);
+
+  const currentChains = showTestnets ? TESTNET_CHAINS : MAINNET_CHAINS;
+
   const handleToggle = (coinType: number) => {
     if (selectedChains.includes(coinType)) {
       onChange(selectedChains.filter((ct) => ct !== coinType));
@@ -20,11 +29,16 @@ export function ChainSelector({
   };
 
   const handleSelectAll = () => {
-    onChange(SUPPORTED_CHAINS.map((c) => c.coinType));
+    onChange(currentChains.map((c) => c.coinType));
   };
 
   const handleSelectNone = () => {
     onChange([]);
+  };
+
+  const handleNetworkToggle = () => {
+    setShowTestnets(!showTestnets);
+    onChange([]); // Clear selection when switching networks
   };
 
   return (
@@ -51,8 +65,28 @@ export function ChainSelector({
           </button>
         </div>
       </div>
+
+      <div className="network-toggle">
+        <button
+          type="button"
+          onClick={handleNetworkToggle}
+          disabled={disabled}
+          className={`toggle-btn ${!showTestnets ? "active" : ""}`}
+        >
+          Mainnet
+        </button>
+        <button
+          type="button"
+          onClick={handleNetworkToggle}
+          disabled={disabled}
+          className={`toggle-btn ${showTestnets ? "active" : ""}`}
+        >
+          Testnet
+        </button>
+      </div>
+
       <div className="chain-list">
-        {SUPPORTED_CHAINS.map((chain: SupportedChain) => (
+        {currentChains.map((chain: SupportedChain) => (
           <label key={chain.coinType} className="chain-item">
             <input
               type="checkbox"

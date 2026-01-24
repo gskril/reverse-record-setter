@@ -17,8 +17,9 @@ import {
   L2_REVERSE_REGISTRAR_ADDRESS,
   L2_REVERSE_REGISTRAR_ABI,
 } from "../lib/contract";
+import type { Bindings } from "../types";
 
-const app = new Hono();
+const app = new Hono<{ Bindings: Bindings }>();
 
 interface SetReverseRequest {
   addr: Address;
@@ -43,13 +44,14 @@ app.get("/chains", (c) => {
     chainId: config.chain.id,
     chainName: config.chain.name,
     coinType: config.coinType,
+    isTestnet: config.isTestnet,
   }));
   return c.json({ chains });
 });
 
 // POST /api/set-reverse - Broadcast reverse record transactions
 app.post("/set-reverse", async (c) => {
-  const privateKey = Bun.env.RELAYER_PRIVATE_KEY;
+  const privateKey = c.env.RELAYER_PRIVATE_KEY;
 
   if (!privateKey) {
     return c.json(
