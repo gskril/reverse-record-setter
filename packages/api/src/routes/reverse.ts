@@ -7,11 +7,12 @@ import {
   publicActions,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { SUPPORTED_CHAINS, getChainByCoinType } from "shared/chains";
 import {
-  L2_REVERSE_REGISTRAR_ADDRESS,
-  L2_REVERSE_REGISTRAR_ABI,
-} from "../lib/contract";
+  SUPPORTED_CHAINS,
+  getChainByCoinType,
+  getL2ReverseRegistrarAddress,
+} from "shared/chains";
+import { L2_REVERSE_REGISTRAR_ABI } from "../lib/contract";
 import type { Bindings } from "../types";
 import { setReverseSchema } from "shared/schema";
 
@@ -96,7 +97,7 @@ app.post("/set-reverse", async (c) => {
 
       // Send the transaction
       const txHash = await client.writeContract({
-        address: L2_REVERSE_REGISTRAR_ADDRESS,
+        address: getL2ReverseRegistrarAddress(chainConfig.isTestnet),
         abi: L2_REVERSE_REGISTRAR_ABI,
         functionName: "setNameForAddrWithSignature",
         args: [addr, signatureExpiry, name, coinTypes.map(BigInt), signature],

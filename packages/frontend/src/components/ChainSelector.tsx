@@ -3,7 +3,7 @@ import { MAINNET_CHAINS, TESTNET_CHAINS } from "shared/chains";
 
 interface ChainSelectorProps {
   selectedChains: bigint[];
-  onChange: (coinTypes: bigint[]) => void;
+  onChange: (coinTypes: bigint[], isTestnet: boolean) => void;
   disabled?: boolean;
 }
 
@@ -18,23 +18,30 @@ export function ChainSelector({
 
   const handleToggle = (coinType: bigint) => {
     if (selectedChains.includes(coinType)) {
-      onChange(selectedChains.filter((ct) => ct !== coinType));
+      onChange(
+        selectedChains.filter((ct) => ct !== coinType),
+        showTestnets
+      );
     } else {
-      onChange([...selectedChains, coinType]);
+      onChange([...selectedChains, coinType], showTestnets);
     }
   };
 
   const handleSelectAll = () => {
-    onChange(currentChains.map((c) => c.coinType));
+    onChange(
+      currentChains.map((c) => c.coinType),
+      showTestnets
+    );
   };
 
   const handleSelectNone = () => {
-    onChange([]);
+    onChange([], showTestnets);
   };
 
   const handleNetworkToggle = () => {
-    setShowTestnets(!showTestnets);
-    onChange([]);
+    const newShowTestnets = !showTestnets;
+    setShowTestnets(newShowTestnets);
+    onChange([], newShowTestnets);
   };
 
   return (

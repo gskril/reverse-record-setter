@@ -13,6 +13,18 @@ import {
 } from "viem/chains";
 import { toCoinType } from "viem";
 
+// L2ReverseRegistrar addresses (same across all L2s via CREATE3)
+export const L2_REVERSE_REGISTRAR_ADDRESS_MAINNET =
+  "0x0000000000D8e504002cC26E3Ec46D81971C1664" as const;
+export const L2_REVERSE_REGISTRAR_ADDRESS_TESTNET =
+  "0x00000BeEF055f7934784D6d81b6BC86665630dbA" as const;
+
+export function getL2ReverseRegistrarAddress(isTestnet: boolean) {
+  return isTestnet
+    ? L2_REVERSE_REGISTRAR_ADDRESS_TESTNET
+    : L2_REVERSE_REGISTRAR_ADDRESS_MAINNET;
+}
+
 export interface ChainConfig {
   chain: Chain;
   coinType: bigint;

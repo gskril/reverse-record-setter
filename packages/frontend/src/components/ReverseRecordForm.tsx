@@ -15,6 +15,7 @@ export function ReverseRecordForm() {
 
   const [ensName, setEnsName] = useState("");
   const [selectedChains, setSelectedChains] = useState<bigint[]>([]);
+  const [isTestnet, setIsTestnet] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [results, setResults] = useState<ChainResult[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -40,7 +41,8 @@ export function ReverseRecordForm() {
         address as Address,
         ensName,
         coinTypesBigInt,
-        signatureExpiry
+        signatureExpiry,
+        isTestnet
       );
 
       const signature = await signMessageAsync({
@@ -111,7 +113,10 @@ export function ReverseRecordForm() {
 
         <ChainSelector
           selectedChains={selectedChains}
-          onChange={setSelectedChains}
+          onChange={(chains, testnet) => {
+            setSelectedChains(chains);
+            setIsTestnet(testnet);
+          }}
           disabled={isSubmitting || isSigning}
         />
 

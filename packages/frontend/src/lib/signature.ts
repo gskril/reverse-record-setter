@@ -6,10 +6,7 @@ import {
   type Hex,
   hashMessage,
 } from "viem";
-
-// L2ReverseRegistrar address (same across all L2s)
-export const L2_REVERSE_REGISTRAR_ADDRESS =
-  "0x0000000000D8e504002cC26E3Ec46D81971C1664" as const;
+import { getL2ReverseRegistrarAddress } from "shared/chains";
 
 // Function selector for setNameForAddrWithSignature(address,string,uint256[],uint256,bytes)
 export const FUNCTION_SELECTOR = "0x2023a04c" as const;
@@ -33,7 +30,8 @@ export function constructSignatureMessage(
   addr: Address,
   name: string,
   coinTypes: bigint[],
-  signatureExpiry: bigint
+  signatureExpiry: bigint,
+  isTestnet: boolean = false
 ): Hex {
   // Encode the coin types as packed uint256 values
   const encodedCoinTypes = coinTypes
@@ -45,7 +43,7 @@ export function constructSignatureMessage(
   const innerMessage = encodePacked(
     ["address", "bytes4", "address", "uint256", "string", "bytes"],
     [
-      L2_REVERSE_REGISTRAR_ADDRESS,
+      getL2ReverseRegistrarAddress(isTestnet),
       FUNCTION_SELECTOR,
       addr,
       signatureExpiry,
@@ -67,13 +65,15 @@ export function getSignatureHash(
   addr: Address,
   name: string,
   coinTypes: bigint[],
-  signatureExpiry: bigint
+  signatureExpiry: bigint,
+  isTestnet: boolean = false
 ): Hex {
   const messageHash = constructSignatureMessage(
     addr,
     name,
     coinTypes,
-    signatureExpiry
+    signatureExpiry,
+    isTestnet
   );
 
   // The final hash includes the Ethereum signed message prefix
