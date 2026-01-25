@@ -1,11 +1,13 @@
-import type { Address, Hex } from "viem";
+import { z } from "zod";
+import { setReverseSchema } from "shared/schema";
+import { replaceBigInts } from "./replaceBigInts";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
 export interface ChainResult {
   chainId: number;
   chainName: string;
-  coinType: number;
+  coinType: bigint;
   transactionHash?: string;
   status: "pending" | "confirmed" | "failed";
   error?: string;
@@ -17,23 +19,15 @@ export interface SetReverseResponse {
   error?: string;
 }
 
-export interface SetReverseRequest {
-  addr: Address;
-  name: string;
-  coinTypes: number[];
-  signatureExpiry: number;
-  signature: Hex;
-}
-
 export async function setReverseRecords(
-  request: SetReverseRequest
+  request: z.infer<typeof setReverseSchema>
 ): Promise<SetReverseResponse> {
   const response = await fetch(`${API_URL}/api/set-reverse`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(request),
+    body: JSON.stringify(replaceBigInts(request, (x) => x.toString())),
   });
 
   if (!response.ok) {

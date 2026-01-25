@@ -36,7 +36,10 @@ export function constructSignatureMessage(
   signatureExpiry: bigint
 ): Hex {
   // Encode the coin types as packed uint256 values
-  const encodedCoinTypes = coinTypes.map((ct) => toHex(ct, { size: 32 })).join("").slice(2);
+  const encodedCoinTypes = coinTypes
+    .map((ct) => toHex(ct, { size: 32 }))
+    .join("")
+    .slice(2);
 
   // Construct the inner message
   const innerMessage = encodePacked(
@@ -81,7 +84,7 @@ export function getSignatureHash(
 /**
  * Generate a signature expiry timestamp (1 hour from now)
  */
-export function generateSignatureExpiry(): number {
+export function generateSignatureExpiry() {
   const ONE_HOUR = 60 * 60;
-  return Math.floor(Date.now() / 1000) + ONE_HOUR;
+  return BigInt(Math.floor(Date.now() / 1000) + ONE_HOUR);
 }

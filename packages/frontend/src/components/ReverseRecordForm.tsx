@@ -14,13 +14,13 @@ export function ReverseRecordForm() {
   const { signMessageAsync, isPending: isSigning } = useSignMessage();
 
   const [ensName, setEnsName] = useState("");
-  const [selectedChains, setSelectedChains] = useState<number[]>([]);
+  const [selectedChains, setSelectedChains] = useState<bigint[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [results, setResults] = useState<ChainResult[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [step, setStep] = useState<
-    "input" | "signing" | "submitting" | "done"
-  >("input");
+  const [step, setStep] = useState<"input" | "signing" | "submitting" | "done">(
+    "input"
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export function ReverseRecordForm() {
         address as Address,
         ensName,
         coinTypesBigInt,
-        BigInt(signatureExpiry)
+        signatureExpiry
       );
 
       const signature = await signMessageAsync({

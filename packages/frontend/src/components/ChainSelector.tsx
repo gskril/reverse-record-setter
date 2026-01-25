@@ -1,13 +1,9 @@
 import { useState } from "react";
-import {
-  MAINNET_CHAINS,
-  TESTNET_CHAINS,
-  type SupportedChain,
-} from "../lib/chains";
+import { MAINNET_CHAINS, TESTNET_CHAINS } from "shared/chains";
 
 interface ChainSelectorProps {
-  selectedChains: number[];
-  onChange: (coinTypes: number[]) => void;
+  selectedChains: bigint[];
+  onChange: (coinTypes: bigint[]) => void;
   disabled?: boolean;
 }
 
@@ -20,7 +16,7 @@ export function ChainSelector({
 
   const currentChains = showTestnets ? TESTNET_CHAINS : MAINNET_CHAINS;
 
-  const handleToggle = (coinType: number) => {
+  const handleToggle = (coinType: bigint) => {
     if (selectedChains.includes(coinType)) {
       onChange(selectedChains.filter((ct) => ct !== coinType));
     } else {
@@ -86,7 +82,7 @@ export function ChainSelector({
       </div>
 
       <div className="chain-list">
-        {currentChains.map((chain: SupportedChain) => (
+        {currentChains.map((chain) => (
           <label key={chain.coinType} className="chain-item">
             <input
               type="checkbox"

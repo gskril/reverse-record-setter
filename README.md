@@ -273,9 +273,9 @@ You can also deploy everything to Cloudflare Pages with Functions for the API.
 
 ```typescript
 // packages/frontend/functions/api/[[route]].ts
-import app from '../../packages/api/src/index'
+import app from "../../packages/api/src/index";
 
-export const onRequest = app.fetch
+export const onRequest = app.fetch;
 ```
 
 2. Configure Pages to build both packages

@@ -1,0 +1,13 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./chains": "./src/chains.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "dependencies": {
+    "viem": "2.44.4",
+    "zod": "^4.3.6"
+  }
+}

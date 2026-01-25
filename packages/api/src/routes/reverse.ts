@@ -1,49 +1,21 @@
 import { Hono } from "hono";
 import {
   createWalletClient,
-  createPublicClient,
   http,
   type Hash,
-  type Address,
   type Hex,
-  getAddress,
-  toHex,
-  isHex,
   publicActions,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import {
-  SUPPORTED_CHAINS,
-  getChainByCoinType,
-  isSupportedCoinType,
-} from "../config/chains";
+import { SUPPORTED_CHAINS, getChainByCoinType } from "shared/chains";
 import {
   L2_REVERSE_REGISTRAR_ADDRESS,
   L2_REVERSE_REGISTRAR_ABI,
 } from "../lib/contract";
 import type { Bindings } from "../types";
-import { z } from "zod";
+import { setReverseSchema } from "shared/schema";
 
 const app = new Hono<{ Bindings: Bindings }>();
-
-const setReverseSchema = z.object({
-  addr: z.string().transform((val) => getAddress(val)),
-  name: z.string(),
-  coinTypes: z
-    .array(z.coerce.bigint())
-    .min(1)
-    .refine((val) => val.every((v) => isSupportedCoinType(v)), {
-      message: "Unsupported coin types",
-    }),
-  signatureExpiry: z.coerce
-    .bigint()
-    .refine((val) => val > Math.floor(Date.now() / 1000), {
-      message: "Signature expiry must be in the future",
-    }),
-  signature: z
-    .string()
-    .refine((val) => isHex(val), { message: "Invalid hex string" }),
-});
 
 interface ChainResult {
   chainId: number;

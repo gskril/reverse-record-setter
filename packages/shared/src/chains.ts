@@ -9,8 +9,9 @@ import {
   scrollSepolia,
   linea,
   lineaSepolia,
+  type Chain,
 } from "viem/chains";
-import { toCoinType, type Chain } from "viem";
+import { toCoinType } from "viem";
 
 export interface ChainConfig {
   chain: Chain;
@@ -77,7 +78,10 @@ export const TESTNET_CHAINS: ChainConfig[] = [
 ];
 
 // All supported chains
-export const SUPPORTED_CHAINS = [...MAINNET_CHAINS, ...TESTNET_CHAINS];
+export const SUPPORTED_CHAINS: ChainConfig[] = [
+  ...MAINNET_CHAINS,
+  ...TESTNET_CHAINS,
+];
 
 export const CHAIN_BY_COIN_TYPE = new Map(
   SUPPORTED_CHAINS.map((config) => [config.coinType, config])
@@ -90,7 +94,7 @@ export const CHAIN_BY_ID = new Map(
 /**
  * Get chain config by coin type
  */
-export function getChainByCoinType(coinType: bigint) {
+export function getChainByCoinType(coinType: bigint): ChainConfig | undefined {
   return CHAIN_BY_COIN_TYPE.get(coinType);
 }
 
@@ -99,4 +103,19 @@ export function getChainByCoinType(coinType: bigint) {
  */
 export function isSupportedCoinType(coinType: bigint): boolean {
   return CHAIN_BY_COIN_TYPE.has(coinType);
+}
+
+/**
+ * Get chain config by chain ID
+ */
+export function getChainById(chainId: number) {
+  return CHAIN_BY_ID.get(chainId);
+}
+
+export function getMainnetChains(): ChainConfig[] {
+  return MAINNET_CHAINS;
+}
+
+export function getTestnetChains(): ChainConfig[] {
+  return TESTNET_CHAINS;
 }

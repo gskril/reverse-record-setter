@@ -1,5 +1,5 @@
 import type { ChainResult } from "../lib/api";
-import { getChainByCoinType } from "../lib/chains";
+import { getChainByCoinType } from "shared/chains";
 
 interface TransactionResultsProps {
   results: ChainResult[];
@@ -8,7 +8,7 @@ interface TransactionResultsProps {
 export function TransactionResults({ results }: TransactionResultsProps) {
   if (results.length === 0) return null;
 
-  const getExplorerUrl = (coinType: number, txHash: string): string => {
+  const getExplorerUrl = (coinType: bigint, txHash: string): string => {
     const chain = getChainByCoinType(coinType);
     const explorerUrl = chain?.chain.blockExplorers?.default?.url;
     return explorerUrl ? `${explorerUrl}/tx/${txHash}` : "";
