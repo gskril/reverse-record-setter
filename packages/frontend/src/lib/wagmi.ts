@@ -13,9 +13,7 @@ import {
   linea,
   lineaSepolia,
 } from "wagmi/chains";
-import { injected, walletConnect } from "wagmi/connectors";
-
-const projectId = import.meta.env.VITE_WALLETCONNECT_PROJECT_ID || "";
+import { injected } from "wagmi/connectors";
 
 export const config = createConfig({
   chains: [
@@ -34,10 +32,7 @@ export const config = createConfig({
     scrollSepolia,
     lineaSepolia,
   ],
-  connectors: [
-    injected(),
-    ...(projectId ? [walletConnect({ projectId })] : []),
-  ],
+  connectors: [injected()],
   transports: {
     // Mainnets
     [mainnet.id]: http(),

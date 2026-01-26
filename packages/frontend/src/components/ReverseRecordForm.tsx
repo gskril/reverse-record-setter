@@ -14,7 +14,7 @@ export function ReverseRecordForm() {
   const { signMessageAsync, isPending: isSigning } = useSignMessage();
 
   const [ensName, setEnsName] = useState("");
-  const [selectedChains, setSelectedChains] = useState<bigint[]>([]);
+  const [selectedChains, setSelectedChains] = useState<bigint[]>([]); // cointypes
   const [isTestnet, setIsTestnet] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [results, setResults] = useState<ChainResult[]>([]);
@@ -34,13 +34,10 @@ export function ReverseRecordForm() {
       setStep("signing");
       const signatureExpiry = generateSignatureExpiry();
 
-      // Convert to bigint for viem signature construction
-      const coinTypesBigInt = selectedChains.map(BigInt);
-
       const messageHash = constructSignatureMessage(
-        address as Address,
+        address,
         ensName,
-        coinTypesBigInt,
+        selectedChains,
         signatureExpiry,
         isTestnet
       );

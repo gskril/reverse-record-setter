@@ -145,7 +145,7 @@ Returns list of supported chains with their coin types:
 
 ## Frontend Flow
 
-1. **Connect Wallet** - User connects via wagmi (injected wallet or WalletConnect)
+1. **Connect Wallet** - User connects via wagmi (injected wallet)
 2. **Enter ENS Name** - Input field for the ENS name to set as reverse
 3. **Select Network** - Toggle between Mainnet and Testnet chains
 4. **Select Chains** - Checkboxes for which L2s to set the reverse record on
@@ -163,7 +163,6 @@ Returns list of supported chains with their coin types:
 ### Frontend
 
 - `VITE_API_URL` - URL of the API (defaults to http://localhost:3001)
-- `VITE_WALLETCONNECT_PROJECT_ID` - WalletConnect project ID (optional)
 
 ## L2ReverseRegistrar Contract
 
@@ -210,7 +209,6 @@ bun run dev:frontend # Frontend on http://localhost:5173
 
 1. Copy `.env.example` to `.env` in both packages
 2. Add your relayer private key to `packages/api/.env`
-3. (Optional) Add WalletConnect project ID to `packages/frontend/.env`
 
 ---
 

@@ -20,3 +20,12 @@ export const setReverseSchema = z.object({
     .string()
     .refine((val) => isHex(val), { message: "Invalid hex string" }),
 });
+
+export interface ChainResult {
+  chainId: number;
+  chainName: string;
+  coinType: number;
+  transactionHash?: string;
+  status: "pending" | "confirmed" | "failed";
+  error?: string;
+}

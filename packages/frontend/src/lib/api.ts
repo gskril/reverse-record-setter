@@ -1,19 +1,10 @@
 import { z } from "zod";
-import { setReverseSchema } from "shared/schema";
+import { ChainResult, setReverseSchema } from "shared/schema";
 import { replaceBigInts } from "./replaceBigInts";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3001";
 
-export interface ChainResult {
-  chainId: number;
-  chainName: string;
-  coinType: bigint;
-  transactionHash?: string;
-  status: "pending" | "confirmed" | "failed";
-  error?: string;
-}
-
-export interface SetReverseResponse {
+interface SetReverseResponse {
   success: boolean;
   results?: ChainResult[];
   error?: string;

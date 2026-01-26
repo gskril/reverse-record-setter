@@ -14,18 +14,9 @@ import {
 } from "shared/chains";
 import { L2_REVERSE_REGISTRAR_ABI } from "../lib/contract";
 import type { Bindings } from "../types";
-import { setReverseSchema } from "shared/schema";
+import { ChainResult, setReverseSchema } from "shared/schema";
 
 const app = new Hono<{ Bindings: Bindings }>();
-
-interface ChainResult {
-  chainId: number;
-  chainName: string;
-  coinType: number;
-  transactionHash?: Hash;
-  status: "pending" | "confirmed" | "failed";
-  error?: string;
-}
 
 // GET /api/chains - Return supported chains
 app.get("/chains", (c) => {
