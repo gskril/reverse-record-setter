@@ -29,3 +29,9 @@ export interface ChainResult {
   status: "pending" | "confirmed" | "failed";
   error?: string;
 }
+
+export interface SetReverseResponse {
+  success: boolean;
+  results?: ChainResult[];
+  error?: string;
+}

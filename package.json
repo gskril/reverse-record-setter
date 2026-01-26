@@ -1,5 +1,5 @@
 {
-  "name": "reverse-record-setter",
+  "name": "ens-reverse-records",
   "private": true,
   "workspaces": {
     "packages": [

@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, type TypedResponse } from "hono";
 import {
   createWalletClient,
   http,
@@ -15,7 +15,11 @@ import {
 } from "shared/chains";
 import { L2_REVERSE_REGISTRAR_ABI } from "../lib/contract";
 import type { Bindings } from "../types";
-import { ChainResult, setReverseSchema } from "shared/schema";
+import {
+  type ChainResult,
+  type SetReverseResponse,
+  setReverseSchema,
+} from "shared/schema";
 
 const app = new Hono<{ Bindings: Bindings }>();
 
@@ -31,8 +35,13 @@ app.get("/chains", (c) => {
   );
 });
 
+type SetReverseResponseWithStatus = TypedResponse<
+  SetReverseResponse,
+  200 | 400 | 500
+>;
+
 // POST /api/set-reverse - Broadcast reverse record transactions
-app.post("/set-reverse", async (c) => {
+app.post("/set-reverse", async (c): Promise<SetReverseResponseWithStatus> => {
   const privateKey = c.env.RELAYER_PRIVATE_KEY;
 
   if (!privateKey) {
@@ -130,10 +139,13 @@ app.post("/set-reverse", async (c) => {
 
   const allSuccessful = results.every((r) => r.status === "confirmed");
 
-  return c.json({
-    success: allSuccessful,
-    results,
-  });
+  return c.json(
+    {
+      success: allSuccessful,
+      results,
+    },
+    200
+  );
 });
 
 export default app;

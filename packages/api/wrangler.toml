@@ -1,18 +1,14 @@
-name = "ens-reverse-record-api"
+name = "ens-reverse-records"
 main = "src/worker.ts"
 compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
+
+# Serve frontend static assets
+[assets]
+directory = "../frontend/dist"
 
 # Environment variables (set via wrangler secret or dashboard)
 # RELAYER_PRIVATE_KEY = "your-private-key"
 
 [vars]
 # Non-secret environment variables can go here
-
-# Production environment
-[env.production]
-name = "ens-reverse-record-api"
-
-# Staging/testnet environment
-[env.staging]
-name = "ens-reverse-record-api-staging"

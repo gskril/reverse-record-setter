@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import reverseRoutes from "./routes/reverse";
-import type { Bindings } from "./types";
 
 const app = new Hono();
 
@@ -16,13 +15,6 @@ app.use(
     allowHeaders: ["Content-Type"],
   })
 );
-
-// Health check
-app.get("/", (c) => {
-  return c.json({
-    status: "ok",
-  });
-});
 
 // Mount routes
 app.route("/api", reverseRoutes);

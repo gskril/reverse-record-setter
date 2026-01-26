@@ -1,52 +1,10 @@
 # ENS Reverse Record Setter
 
-## Overview
-
-A monorepo containing an API and frontend for setting ENS reverse records across multiple L2 chains with a single signature.
-
-## Architecture
-
-```
-reverse-record-setter/
-├── packages/
-│   ├── api/                    # Hono API (Bun or Cloudflare Workers)
-│   │   ├── src/
-│   │   │   ├── index.ts        # Main app (shared)
-│   │   │   ├── bun.ts          # Bun entry point
-│   │   │   ├── worker.ts       # Cloudflare Workers entry point
-│   │   │   ├── types.ts        # TypeScript types
-│   │   │   ├── config/
-│   │   │   │   └── chains.ts   # Chain configurations
-│   │   │   ├── lib/
-│   │   │   │   └── contract.ts # Contract ABI & address
-│   │   │   └── routes/
-│   │   │       └── reverse.ts  # API routes
-│   │   ├── wrangler.toml       # Cloudflare Workers config
-│   │   └── .env.example
-│   └── frontend/               # React + Vite + wagmi
-│       ├── src/
-│       │   ├── main.tsx
-│       │   ├── App.tsx
-│       │   ├── index.css
-│       │   ├── lib/
-│       │   │   ├── wagmi.ts    # Wagmi config
-│       │   │   ├── chains.ts   # Chain configs
-│       │   │   ├── signature.ts # Signature construction
-│       │   │   └── api.ts      # API client
-│       │   └── components/
-│       │       ├── ConnectButton.tsx
-│       │       ├── ChainSelector.tsx
-│       │       ├── ReverseRecordForm.tsx
-│       │       └── TransactionResults.tsx
-│       ├── public/
-│       │   ├── _headers        # Cloudflare Pages headers
-│       │   └── _redirects      # SPA redirects
-│       └── .env.example
-├── package.json                # Root workspace config
-└── plan.md
-```
+An API and demo frontend for setting ENS reverse records across multiple L2 chains with a single signature.
 
 ## Supported Chains
+
+The following chains were defined in [ENSIP-19](https://docs.ens.domains/ensip/19/).
 
 ### Mainnets
 
@@ -68,24 +26,39 @@ reverse-record-setter/
 | Scroll Sepolia   | 534351   | 2148017999 |
 | Linea Sepolia    | 59141    | 2147542789 |
 
-**Coin Type Formula (ENSIP-11):** `coinType = 0x80000000 | chainId`
+**Coin Type Formula (ENSIP-11):** `coinType = (0x80000000 | chainId) >>> 0`
 
 ## Signature Format (ERC-191)
 
 The user signs a message with this structure:
 
-```
+```solidity
 keccak256(abi.encodePacked(
-    L2ReverseRegistrarAddress,  // 0x0000000000D8e504002cC26E3Ec46D81971C1664
-    0x2023a04c,                 // setNameForAddrWithSignature selector
-    addr,
-    signatureExpiry,
-    name,
-    coinTypes
+    address(this),    // L2ReverseRegistrar address
+    0x64752d0b,       // `setNameForAddrWithSignature` selector
+    addr,             // Address to set the name for
+    signatureExpiry,  // Maxiumum 1 hour - 1 block
+    name,             // Name to set
+    coinTypes         // ENSIP-11 coin types to authorize
 )).toEthSignedMessageHash()
 ```
 
-The `toEthSignedMessageHash()` adds the prefix: `"\x19Ethereum Signed Message:\n32"`
+That signature gets executed on relevant chains via this method:
+
+```solidity
+/// @param addr The address to set the name for.
+/// @param name The name to set.
+/// @param coinTypes The coin types to set. Must be inclusive of the coin type for the contract.
+/// @param signatureExpiry Date when the signature expires.
+/// @param signature The signature from the addr.
+function setNameForAddrWithSignature(
+    address addr,
+    uint256 signatureExpiry,
+    string memory name,
+    uint256[] memory coinTypes,
+    bytes memory signature
+) external;
+```
 
 ## API Design
 
@@ -98,7 +71,7 @@ The `toEthSignedMessageHash()` adds the prefix: `"\x19Ethereum Signed Message:\n
   "addr": "0x...",
   "name": "vitalik.eth",
   "coinTypes": [2147492101, 2147483658, 2147525809],
-  "signatureExpiry": 1706140800,
+  "signatureExpiry": 1769000000,
   "signature": "0x..."
 }
 ```
@@ -143,81 +116,43 @@ Returns list of supported chains with their coin types:
 }
 ```
 
-## Frontend Flow
-
-1. **Connect Wallet** - User connects via wagmi (injected wallet)
-2. **Enter ENS Name** - Input field for the ENS name to set as reverse
-3. **Select Network** - Toggle between Mainnet and Testnet chains
-4. **Select Chains** - Checkboxes for which L2s to set the reverse record on
-5. **Sign Message** - Frontend constructs the message and requests signature
-6. **Submit to API** - Send the payload to the API
-7. **Display Results** - Show transaction hashes and confirmation status for each chain
-
 ## Environment Variables
 
 ### API
 
-- `RELAYER_PRIVATE_KEY` - Private key for the relayer wallet that pays gas
+- `RELAYER_PRIVATE_KEY` - Private key for the relayer wallet that pays gas. Needs ETH on all supported chains.
 - `PORT` - Server port (default: 3001, Bun only)
 
 ### Frontend
 
 - `VITE_API_URL` - URL of the API (defaults to http://localhost:3001)
 
-## L2ReverseRegistrar Contract
-
-The L2ReverseRegistrar is deployed at the same address across all L2s using CREATE3.
-
-**Contract Address:** `0x0000000000D8e504002cC26E3Ec46D81971C1664`
-
-**ABI (relevant function):**
-
-```solidity
-function setNameForAddrWithSignature(
-    address addr,
-    string calldata name,
-    uint256[] calldata coinTypes,
-    uint256 signatureExpiry,
-    bytes calldata signature
-) external returns (bytes32)
-```
-
 ## Local Development
 
-### Prerequisites
-
-- Bun installed (`curl -fsSL https://bun.sh/install | bash`)
-
-### Install Dependencies
+Install Dependencies
 
 ```bash
 bun install
 ```
 
-### Start Development
-
-```bash
-# Start both API and frontend
-bun run dev
-
-# Or start individually
-bun run dev:api      # API on http://localhost:3001
-bun run dev:frontend # Frontend on http://localhost:5173
-```
-
-### Environment Setup
+Setup your environment variables
 
 1. Copy `.env.example` to `.env` in both packages
 2. Add your relayer private key to `packages/api/.env`
 
----
+Start the dev API and frontend
+
+```bash
+bun run dev:api      # API on http://localhost:3001
+bun run dev:frontend # Frontend on http://localhost:5173
+```
 
 ## Cloudflare Deployment
 
-The project supports deployment to Cloudflare with:
+The project supports two deployment options:
 
-- **API**: Cloudflare Workers
-- **Frontend**: Cloudflare Pages
+- **Option 1**: Separate deployments (Workers for API, Pages for frontend)
+- **Option 2**: Single origin (Workers with static assets)
 
 ### Option 1: Separate Deployments
 
@@ -233,14 +168,11 @@ npx wrangler login
 npx wrangler secret put RELAYER_PRIVATE_KEY
 # Enter your private key when prompted
 
-# Deploy to production
+# Deploy
 bun run deploy
-
-# Or deploy to staging
-npx wrangler deploy --env staging
 ```
 
-The API will be available at `https://ens-reverse-record-api.<your-subdomain>.workers.dev`
+The API will be available at `https://ens-reverse-records.<your-subdomain>.workers.dev`
 
 #### Deploy Frontend to Cloudflare Pages
 
@@ -263,39 +195,39 @@ Or connect your GitHub repository to Cloudflare Pages:
    - **Build output directory:** `packages/frontend/dist`
 4. Add environment variable: `VITE_API_URL` = your Workers API URL
 
-### Option 2: Single Origin (Pages + Functions)
+### Option 2: Single Origin (Workers + Assets)
 
-You can also deploy everything to Cloudflare Pages with Functions for the API.
+Deploy both frontend and API as a single Cloudflare Worker with static assets.
 
-1. Create `functions/api/[[route]].ts` in the frontend package:
+The `wrangler.toml` in the API package is already configured to serve the frontend:
 
-```typescript
-// packages/frontend/functions/api/[[route]].ts
-import app from "../../packages/api/src/index";
-
-export const onRequest = app.fetch;
+```toml
+[assets]
+directory = "../frontend/dist"
 ```
 
-2. Configure Pages to build both packages
-3. The API will be available at `/api/*` on the same domain
+Deploy:
+
+```bash
+# Build frontend first
+cd packages/frontend && bun run build
+
+# Deploy Worker with static assets
+cd packages/api
+npx wrangler secret put RELAYER_PRIVATE_KEY
+bun run deploy
+```
+
+The Worker serves:
+
+- `/api/*` routes handled by Hono
+- All other routes serve static files from the frontend build
 
 ### Cloudflare Dashboard Configuration
 
-#### Workers (API)
-
-1. Go to Workers & Pages > Create > Worker
-2. Name: `ens-reverse-record-api`
-3. After deployment, go to Settings > Variables
-4. Add `RELAYER_PRIVATE_KEY` as an encrypted secret
-
-#### Pages (Frontend)
-
-1. Go to Workers & Pages > Create > Pages
-2. Connect your Git repository
-3. Framework preset: None
-4. Build command: `cd packages/frontend && bun install && bun run build`
-5. Build output: `packages/frontend/dist`
-6. Add environment variable: `VITE_API_URL`
+1. Go to Workers & Pages > Your Worker (`ens-reverse-records`)
+2. Go to Settings > Variables
+3. Add `RELAYER_PRIVATE_KEY` as an encrypted secret
 
 ### Custom Domains
 
@@ -303,45 +235,3 @@ export const onRequest = app.fetch;
 2. Click "Custom Domains"
 3. Add your domain (e.g., `api.yourdomain.com` for the API)
 4. Update DNS records as instructed
-
----
-
-## Implementation Tasks
-
-### Phase 1: Project Setup
-
-- [x] Create plan.md
-- [x] Set up monorepo with workspaces
-- [x] Configure TypeScript for both packages
-
-### Phase 2: API Implementation
-
-- [x] Set up Hono server with Bun
-- [x] Install viem (v2.44.1)
-- [x] Create chain configurations (mainnet + testnet)
-- [x] Implement coin type to chain ID conversion
-- [x] Implement POST /api/set-reverse endpoint
-- [x] Implement GET /api/chains endpoint
-- [x] Add transaction confirmation waiting
-- [x] Add Cloudflare Workers support
-
-### Phase 3: Frontend Implementation
-
-- [x] Set up Vite + React project
-- [x] Install wagmi (v2.14.0) + viem + @tanstack/react-query
-- [x] Configure wallet connectors
-- [x] Create wallet connection UI
-- [x] Create ENS name input form
-- [x] Create chain selection with mainnet/testnet toggle
-- [x] Implement message signing logic
-- [x] Create API submission and result display
-- [x] Add loading states and error handling
-- [x] Add Cloudflare Pages deployment config
-
-## Notes
-
-- The API uses a "naive" approach where it requires manual ETH funding on each chain
-- All L2 transactions should confirm quickly (< 10 seconds typically)
-- The signature includes the coin types array, so one signature authorizes all selected chains
-- The L2ReverseRegistrar validates that the contract's own coin type is in the coinTypes array
-- Testnet chains use the same L2ReverseRegistrar contract address
