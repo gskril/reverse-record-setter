@@ -7,7 +7,8 @@ import {
   constructSignatureMessage,
   generateSignatureExpiry,
 } from "../lib/signature";
-import { setReverseRecords, type ChainResult } from "../lib/api";
+import { setReverseRecords } from "../lib/api";
+import type { ChainResult } from "shared/schema";
 
 export function ReverseRecordForm() {
   const { address, isConnected } = useAccount();

@@ -102,8 +102,10 @@ export const CHAIN_BY_COIN_TYPE = new Map(
 /**
  * Get chain config by coin type
  */
-export function getChainByCoinType(coinType: bigint): ChainConfig | undefined {
-  return CHAIN_BY_COIN_TYPE.get(coinType);
+export function getChainByCoinType(
+  coinType: bigint | number
+): ChainConfig | undefined {
+  return CHAIN_BY_COIN_TYPE.get(BigInt(coinType));
 }
 
 /**
