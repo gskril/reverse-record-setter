@@ -149,73 +149,17 @@ bun run dev:frontend # Frontend on http://localhost:5173
 
 ## Cloudflare Deployment
 
-The project supports two deployment options:
+The recommended way to deploy is to fork this repository and use Cloudfare's GitHub integration. This will automatically build and deploy the frontend and API when you push to your fork.
 
-- **Option 1**: Separate deployments (Workers for API, Pages for frontend)
-- **Option 2**: Single origin (Workers with static assets)
-
-### Option 1: Separate Deployments
-
-#### Deploy API to Cloudflare Workers
-
-```bash
-cd packages/api
-
-# Login to Cloudflare (first time only)
-npx wrangler login
-
-# Set the secret (private key for relayer wallet)
-npx wrangler secret put RELAYER_PRIVATE_KEY
-# Enter your private key when prompted
-
-# Deploy
-bun run deploy
-```
-
-The API will be available at `https://ens-reverse-records.<your-subdomain>.workers.dev`
-
-#### Deploy Frontend to Cloudflare Pages
-
-```bash
-cd packages/frontend
-
-# Build the frontend
-bun run build
-
-# Deploy to Cloudflare Pages
-bun run deploy
-```
-
-Or connect your GitHub repository to Cloudflare Pages:
-
-1. Go to Cloudflare Dashboard > Pages
-2. Create a new project and connect your repository
-3. Configure build settings:
-   - **Build command:** `cd packages/frontend && bun install && bun run build`
-   - **Build output directory:** `packages/frontend/dist`
-4. Add environment variable: `VITE_API_URL` = your Workers API URL
-
-### Option 2: Single Origin (Workers + Assets)
-
-Deploy both frontend and API as a single Cloudflare Worker with static assets.
-
-The `wrangler.toml` in the API package is already configured to serve the frontend:
-
-```toml
-[assets]
-directory = "../frontend/dist"
-```
-
-Deploy:
+For manual deployment:
 
 ```bash
 # Build frontend first
-cd packages/frontend && bun run build
+bun run build --filter=frontend
 
-# Deploy Worker with static assets
-cd packages/api
+# Set secret and deploy
 npx wrangler secret put RELAYER_PRIVATE_KEY
-bun run deploy
+npx wrangler deploy
 ```
 
 The Worker serves:
