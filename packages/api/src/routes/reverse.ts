@@ -2,9 +2,10 @@ import { Hono } from "hono";
 import {
   createWalletClient,
   http,
-  type Hash,
-  type Hex,
   publicActions,
+  type Hex,
+  type WaitForTransactionReceiptErrorType,
+  type WriteContractErrorType,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import {
@@ -111,10 +112,14 @@ app.post("/set-reverse", async (c) => {
       if (receipt.status !== "success") {
         result.error = "Transaction reverted";
       }
-    } catch (error) {
+    } catch (e) {
       result.status = "failed";
-      result.error =
-        error instanceof Error ? error.message : "Unknown error occurred";
+
+      const error = e as
+        | WriteContractErrorType
+        | WaitForTransactionReceiptErrorType;
+
+      result.error = error.message ?? "Unknown error occurred";
     }
 
     return result;

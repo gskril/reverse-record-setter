@@ -1,17 +1,18 @@
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useEnsName, useConnect, useDisconnect } from "wagmi";
 
 export function ConnectButton() {
   const { address, isConnected } = useAccount();
+  const { data: ensName } = useEnsName({ address, chainId: 1 });
   const { connect, connectors, isPending } = useConnect();
   const { disconnect } = useDisconnect();
+
+  const truncatedAddr = address?.slice(0, 6) + "..." + address?.slice(-4);
 
   if (isConnected && address) {
     return (
       <div className="connect-section">
         <div className="connected-info">
-          <span className="address">
-            {address.slice(0, 6)}...{address.slice(-4)}
-          </span>
+          <span className="address">{ensName ?? truncatedAddr}</span>
           <button onClick={() => disconnect()} className="disconnect-btn">
             Disconnect
           </button>
