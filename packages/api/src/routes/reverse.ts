@@ -33,7 +33,7 @@ app.get("/chains", (c) => {
     SUPPORTED_CHAINS.map((config) => ({
       chainId: config.chain.id,
       chainName: config.chain.name,
-      coinType: config.coinType,
+      coinType: Number(config.coinType),
       isTestnet: config.isTestnet,
     }))
   );
@@ -54,7 +54,7 @@ app.post("/set-reverse", async (c) => {
   try {
     body = await c.req.json();
   } catch {
-    return c.json({ success: false, error: "Invalid JSON body" }, 400);
+    return c.json({ success: false, error: "Missing JSON body" }, 400);
   }
 
   const safeParse = setReverseSchema.safeParse(body);
@@ -71,17 +71,22 @@ app.post("/set-reverse", async (c) => {
   // Process each chain in parallel
   const promises = coinTypes.map(async (coinType) => {
     const chainConfig = getChainByCoinType(coinType);
+
+    let result: ChainResult;
+
     if (!chainConfig) {
-      return {
+      result = {
         chainId: 0,
         chainName: "Unknown",
         coinType: Number(coinType),
-        status: "failed" as const,
+        status: "failed",
         error: "Chain not found",
       };
+
+      return result;
     }
 
-    const result: ChainResult = {
+    result = {
       chainId: chainConfig.chain.id,
       chainName: chainConfig.chain.name,
       coinType: Number(coinType),

@@ -4,7 +4,7 @@ import { logger } from "hono/logger";
 import reverseRoutes from "./routes/reverse";
 import type { Bindings } from "./types";
 
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono();
 
 // Middleware
 app.use("*", logger());
@@ -20,7 +20,6 @@ app.use(
 // Health check
 app.get("/", (c) => {
   return c.json({
-    name: "ENS Reverse Record Setter API",
     status: "ok",
   });
 });
