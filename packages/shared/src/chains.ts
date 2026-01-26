@@ -99,10 +99,6 @@ export const CHAIN_BY_COIN_TYPE = new Map(
   SUPPORTED_CHAINS.map((config) => [config.coinType, config])
 );
 
-export const CHAIN_BY_ID = new Map(
-  SUPPORTED_CHAINS.map((config) => [config.chain.id, config])
-);
-
 /**
  * Get chain config by coin type
  */
@@ -115,19 +111,4 @@ export function getChainByCoinType(coinType: bigint): ChainConfig | undefined {
  */
 export function isSupportedCoinType(coinType: bigint): boolean {
   return CHAIN_BY_COIN_TYPE.has(coinType);
-}
-
-/**
- * Get chain config by chain ID
- */
-export function getChainById(chainId: number) {
-  return CHAIN_BY_ID.get(chainId);
-}
-
-export function getMainnetChains(): ChainConfig[] {
-  return MAINNET_CHAINS;
-}
-
-export function getTestnetChains(): ChainConfig[] {
-  return TESTNET_CHAINS;
 }
