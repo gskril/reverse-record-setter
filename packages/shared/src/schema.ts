@@ -1,5 +1,6 @@
-import { z } from "zod";
 import { getAddress, isHex } from "viem";
+import { z } from "zod";
+
 import { isSupportedCoinType } from "./chains";
 
 export const setReverseSchema = z.object({

@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useAccount, useSignMessage } from "wagmi";
+import type { ChainResult } from "shared/schema";
 import type { Address, Hex } from "viem";
-import { ChainSelector } from "./ChainSelector";
-import { TransactionResults } from "./TransactionResults";
+import { useAccount, useSignMessage } from "wagmi";
+
+import { setReverseRecords } from "../lib/api";
 import {
   constructSignatureMessage,
   generateSignatureExpiry,
 } from "../lib/signature";
-import { setReverseRecords } from "../lib/api";
-import type { ChainResult } from "shared/schema";
+import { ChainSelector } from "./ChainSelector";
+import { TransactionResults } from "./TransactionResults";
 
 export function ReverseRecordForm() {
   const { address, isConnected } = useAccount();

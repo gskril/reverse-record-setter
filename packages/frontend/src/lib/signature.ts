@@ -1,10 +1,10 @@
+import { getL2ReverseRegistrarAddress } from "shared/chains";
 import {
+  type Address,
   encodePacked,
   keccak256,
-  type Address,
   toFunctionSelector,
 } from "viem";
-import { getL2ReverseRegistrarAddress } from "shared/chains";
 
 // Function selector for setNameForAddrWithSignature
 const FUNCTION_SELECTOR = toFunctionSelector(

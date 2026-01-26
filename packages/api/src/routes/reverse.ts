@@ -1,25 +1,26 @@
 import { Hono, type TypedResponse } from "hono";
 import {
-  createWalletClient,
-  http,
-  publicActions,
-  type Hex,
-  type WaitForTransactionReceiptErrorType,
-  type WriteContractErrorType,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import {
   SUPPORTED_CHAINS,
   getChainByCoinType,
   getL2ReverseRegistrarAddress,
 } from "shared/chains";
-import { L2_REVERSE_REGISTRAR_ABI } from "../lib/contract";
-import type { Bindings } from "../types";
 import {
   type ChainResult,
   type SetReverseResponse,
   setReverseSchema,
 } from "shared/schema";
+import {
+  type Hex,
+  type WaitForTransactionReceiptErrorType,
+  type WriteContractErrorType,
+  createWalletClient,
+  http,
+  publicActions,
+} from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+
+import { L2_REVERSE_REGISTRAR_ABI } from "../lib/contract";
+import type { Bindings } from "../types";
 
 const app = new Hono<{ Bindings: Bindings }>();
 

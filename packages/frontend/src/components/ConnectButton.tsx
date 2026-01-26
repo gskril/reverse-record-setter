@@ -1,4 +1,4 @@
-import { useAccount, useEnsName, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect, useEnsName } from "wagmi";
 
 export function ConnectButton() {
   const { address, isConnected } = useAccount();

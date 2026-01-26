@@ -1,17 +1,17 @@
+import { toCoinType } from "viem";
 import {
-  base,
-  baseSepolia,
-  optimism,
-  optimismSepolia,
+  type Chain,
   arbitrum,
   arbitrumSepolia,
-  scroll,
-  scrollSepolia,
+  base,
+  baseSepolia,
   linea,
   lineaSepolia,
-  type Chain,
+  optimism,
+  optimismSepolia,
+  scroll,
+  scrollSepolia,
 } from "viem/chains";
-import { toCoinType } from "viem";
 
 // L2ReverseRegistrar addresses (same across all L2s via CREATE3)
 export const L2_REVERSE_REGISTRAR_ADDRESS_MAINNET =

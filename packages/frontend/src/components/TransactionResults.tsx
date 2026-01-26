@@ -1,5 +1,5 @@
-import type { ChainResult } from "shared/schema";
 import { getChainByCoinType } from "shared/chains";
+import type { ChainResult } from "shared/schema";
 
 interface TransactionResultsProps {
   results: ChainResult[];

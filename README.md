@@ -155,7 +155,7 @@ For manual deployment:
 
 ```bash
 # Build frontend first
-bun run build --filter=frontend
+bun run build
 
 # Set secret and deploy
 npx wrangler secret put RELAYER_PRIVATE_KEY

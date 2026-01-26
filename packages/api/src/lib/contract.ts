@@ -1,4 +1,3 @@
-
 // ABI for setNameForAddrWithSignature function
 export const L2_REVERSE_REGISTRAR_ABI = [
   { inputs: [], name: "CoinTypeNotFound", type: "error" },

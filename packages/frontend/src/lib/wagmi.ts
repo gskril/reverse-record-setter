@@ -1,17 +1,17 @@
-import { http, createConfig } from "wagmi";
+import { createConfig, http } from "wagmi";
 import {
-  mainnet,
-  sepolia,
-  base,
-  baseSepolia,
-  optimism,
-  optimismSepolia,
   arbitrum,
   arbitrumSepolia,
-  scroll,
-  scrollSepolia,
+  base,
+  baseSepolia,
   linea,
   lineaSepolia,
+  mainnet,
+  optimism,
+  optimismSepolia,
+  scroll,
+  scrollSepolia,
+  sepolia,
 } from "wagmi/chains";
 import { injected } from "wagmi/connectors";
 
