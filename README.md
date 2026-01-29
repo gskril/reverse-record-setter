@@ -2,6 +2,9 @@
 
 An API and demo frontend for setting ENS reverse records across multiple L2 chains with a single signature.
 
+> [!WARNING]
+> This repo is provided for demonstration purposes. It is not intended for production use and comes without any security guarantees.
+
 ## Supported Chains
 
 The following chains were defined in [ENSIP-19](https://docs.ens.domains/ensip/19/).
